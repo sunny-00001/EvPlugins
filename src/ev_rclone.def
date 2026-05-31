@@ -1,0 +1,4 @@
+LIBRARY ev_rclone
+
+EXPORTS
+    everything_plugin_proc
