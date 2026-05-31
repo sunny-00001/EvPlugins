@@ -1,7 +1,5 @@
 #include "ev_http_client.h"
 #include "ev_string_util.h"
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -45,26 +43,31 @@ void ev_http_response_free(ev_http_response_t *resp)
 static SOCKET ev_http_connect(const char *host, int port)
 {
     SOCKET sock;
-    struct sockaddr_in addr;
-    struct hostent *he;
+    struct addrinfo hints;
+    struct addrinfo *result = NULL;
+    char port_str[16];
+    int rc;
 
-    sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sock == INVALID_SOCKET) return INVALID_SOCKET;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = IPPROTO_TCP;
 
-    he = gethostbyname(host);
-    if (!he) { closesocket(sock); return INVALID_SOCKET; }
+    _snprintf(port_str, sizeof(port_str), "%d", port);
+    rc = getaddrinfo(host, port_str, &hints, &result);
+    if (rc != 0 || !result) return INVALID_SOCKET;
 
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons((u_short)port);
-    memcpy(&addr.sin_addr, he->h_addr_list[0], (size_t)he->h_length);
+    sock = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+    if (sock == INVALID_SOCKET) { freeaddrinfo(result); return INVALID_SOCKET; }
 
-    if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) == SOCKET_ERROR)
+    if (connect(sock, result->ai_addr, (int)result->ai_addrlen) == SOCKET_ERROR)
     {
         closesocket(sock);
+        freeaddrinfo(result);
         return INVALID_SOCKET;
     }
 
+    freeaddrinfo(result);
     return sock;
 }
 

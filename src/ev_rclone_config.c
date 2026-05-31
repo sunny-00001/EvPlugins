@@ -1,8 +1,7 @@
 #include "ev_rclone_config.h"
-#include "ev_rclone.h"
 #include "ev_rclone_rc.h"
 #include "ev_string_util.h"
-#include <windows.h>
+#include <commdlg.h>
 #include <commctrl.h>
 #include <shlobj.h>
 #include <string.h>

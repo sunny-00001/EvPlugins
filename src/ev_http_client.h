@@ -1,7 +1,7 @@
 #ifndef EV_HTTP_CLIENT_H
 #define EV_HTTP_CLIENT_H
 
-#include <windows.h>
+#include "ev_rclone.h"
 
 typedef struct ev_http_response_s
 {

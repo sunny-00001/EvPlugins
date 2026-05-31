@@ -1,7 +1,7 @@
 #ifndef EV_RCLONE_CONFIG_H
 #define EV_RCLONE_CONFIG_H
 
-#include <windows.h>
+#include "ev_rclone.h"
 
 void ev_rclone_load_settings(void);
 void ev_rclone_save_settings(void);

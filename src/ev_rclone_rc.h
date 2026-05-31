@@ -1,7 +1,7 @@
 #ifndef EV_RCLONE_RC_H
 #define EV_RCLONE_RC_H
 
-#include <windows.h>
+#include "ev_rclone.h"
 #include "ev_json.h"
 
 typedef struct ev_rclone_rc_result_s
