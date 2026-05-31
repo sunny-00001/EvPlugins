@@ -1,4 +1,4 @@
-LIBRARY ev_rclone
+LIBRARY rclone_server64
 
 EXPORTS
     everything_plugin_proc

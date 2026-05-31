@@ -1,8 +1,8 @@
 $vsPath = "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools"
-$vcvarsPath = "$vsPath\VC\Auxiliary\Build\vcvars32.bat"
+$vcvarsPath = "$vsPath\VC\Auxiliary\Build\vcvars64.bat"
 
 if (-not (Test-Path $vcvarsPath)) {
-    Write-Error "vcvars32.bat not found at: $vcvarsPath"
+    Write-Error "vcvars64.bat not found at: $vcvarsPath"
     exit 1
 }
 
@@ -13,15 +13,16 @@ foreach ($line in $output) {
     }
 }
 
-$srcDir = "d:\EvPlugins\src"
-$outDir = "d:\EvPlugins\bin\x86"
-$dllName = "ev_rclone.dll"
+$projectDir = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$srcDir = Join-Path $projectDir "src"
+$outDir = Join-Path $projectDir "bin"
+$dllName = "rclone_server64.dll"
 
 if (-not (Test-Path $outDir)) {
     New-Item -ItemType Directory -Path $outDir -Force | Out-Null
 }
 
-Write-Host "Compiling $dllName (32-bit)..." -ForegroundColor Cyan
+Write-Host "Compiling $dllName (64-bit)..." -ForegroundColor Cyan
 
 $sources = @(
     "ev_rclone.c",
@@ -41,7 +42,7 @@ foreach ($src in $sources) {
 
     Write-Host "  Compiling $src..." -ForegroundColor Gray
 
-    $result = & cl /nologo /c /O2 /W3 /DWIN32 /D_WINDOWS /D_USRDLL /DNDEBUG /D_CRT_SECURE_NO_WARNINGS /I$srcDir $srcPath /Fo$objName 2>&1
+    $result = & cl /nologo /c /O2 /W3 /DWIN32 /D_WIN64 /D_WINDOWS /D_USRDLL /DNDEBUG /D_CRT_SECURE_NO_WARNINGS /I$srcDir $srcPath /Fo$objName 2>&1
 
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  FAILED: $src" -ForegroundColor Red
